@@ -1,0 +1,25 @@
+forge test --match-contract LoanCrossChainReplayPoc -vv
+[⠒] Compiling...
+No files changed, compilation skipped
+
+Ran 2 tests for test/poc_Loan_CrossChain_Replay_test.sol:LoanCrossChainReplayPoc
+[PASS] test_missingChainIdSignatureReplay() (gas: 532882)
+Logs:
+  === CHAIN A (chainId=2370) ===
+  [sign] loanTermHash (chain A): 96572066237612435739941131988061464312044564818931260126603104229373477899093
+  [sign] lender and borrower signed the hash on chain A
+  === CHAIN B (chainId=11155111) REPLAY ===
+  [replay] loanTermHash (chain B): 96572066237612435739941131988061464312044564818931260126603104229373477899093
+  [replay] Hashes are identical -- chainId not included in hash
+  [replay] createLoanTerm() SUCCEEDED with chain-A signatures on chain B!
+  [replay] Loan lender confirmed: 1390849295786071768276380950238675083608645509734
+  [replay] Loan principal confirmed: 1000
+  === REPLAY CONFIRMED ===
+  Signatures for chainId=2370 accepted on chainId=11155111
+  Root cause: block.chainid absent from predictLoanTermHash()
+  Fix: add block.chainid to the hash or adopt EIP-712 domain separator
+
+[PASS] test_noChainIdInHash() (gas: 15027)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 50.29ms (22.30ms CPU time)
+
+Ran 1 test suite in 137.36ms (50.29ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

