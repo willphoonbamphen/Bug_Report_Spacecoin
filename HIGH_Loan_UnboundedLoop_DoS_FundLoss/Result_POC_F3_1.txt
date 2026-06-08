@@ -1,0 +1,37 @@
+forge test --match-contract LoanUnboundedLoopPoc -vv
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 3 tests for test/poc_Loan_UnboundedLoop_test.sol:LoanUnboundedLoopPoc
+[PASS] test_firstIdxStucksOnLongLivedHeadLoan() (gas: 5191636)
+Logs:
+  Gas with 10 funded loans (loan[0] never expires): 9360
+  firstIdx remains 0 as long as loan[0] is Funded.
+  Adding more loans grows nextIdx but firstIdx is stuck -> O(N) growth.
+
+[PASS] test_gasGrowthUnboundedLoop() (gas: 84502586)
+Logs:
+  === UNBOUNDED LOOP -- GAS GROWTH ===
+  checkExpiredLoans() gas at   0 loans: 9516
+  checkExpiredLoans() gas at  50 loans: 42760
+  checkExpiredLoans() gas at 100 loans: 84510
+  checkExpiredLoans() gas at 150 loans: 126260
+  Gas per additional funded loan (warm storage estimate): 835
+  Funded loans needed to exceed 30M block gas limit:      35928
+  === IMPACT ===
+  fundLoan / repay / partialRepay all call checkExpiredLoans().
+  After DoS threshold: all three ops revert out-of-gas.
+  Lender tokens already sent to borrower via fundLoan.
+  repay() blocked -> lender principal permanently unrecoverable.
+
+[PASS] test_repayBearsFullLoopCost() (gas: 54274943)
+Logs:
+  === REPAY GAS WITH 100 FUNDED LOANS ===
+  repay() gas consumed: 114641
+  ~ 1146 gas per funded loan in history
+  At 7000 loans: repay() needs ~ 8022000 gas
+  Block gas limit: 30 000 000
+
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 225.55ms (304.87ms CPU time)
+
+Ran 1 test suite in 276.82ms (225.55ms CPU time): 3 tests passed, 0 failed, 0 skipped (3 total tests)
