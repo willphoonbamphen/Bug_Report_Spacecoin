@@ -1,4 +1,4 @@
-# HIGH — Loan.checkExpiredLoans() Unbounded Loop Enables Permanent DoS on repay/fundLoan, Locking Lender Funds
+## HIGH — Loan.checkExpiredLoans() Unbounded Loop Enables Permanent DoS on repay/fundLoan, Locking Lender Funds
 
 **Program**: SpaceCoin -- CertIK SkyShield  
 **Severity**: High  
